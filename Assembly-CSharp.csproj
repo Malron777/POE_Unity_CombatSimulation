@@ -62,14 +62,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Map.cs" />
-    <Compile Include="Assets\Scripts\Tile.cs" />
-    <Compile Include="Assets\Scripts\Unit.cs" />
+    <Compile Include="Assets\Assets\Scripts\FactoryBuilding.cs" />
+    <Compile Include="Assets\Assets\Scripts\Game_Engine.cs" />
+    <Compile Include="Assets\Assets\Scripts\Map.cs" />
+    <Compile Include="Assets\Assets\Scripts\ResourceBuilding.cs" />
+    <Compile Include="Assets\Assets\Scripts\Tile.cs" />
+    <Compile Include="Assets\Assets\Scripts\Unit.cs" />
+    <Compile Include="Assets\Assets\Scripts\WizardUnit.cs" />
+    <Compile Include="Assets\Menus\Menu.cs" />
+    <Compile Include="Assets\Menus\PauseMenu.cs" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>D:/School/Game Development 1B/POE/POE_CombatSimulation_Unity/POE_CombatSimulation/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.TextMeshPro.Editor">
-      <HintPath>D:/School/Game Development 1B/POE/POE_CombatSimulation_Unity/POE_CombatSimulation/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.PackageManagerUI.Editor">
       <HintPath>D:/School/Game Development 1B/POE/POE_CombatSimulation_Unity/POE_CombatSimulation/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
@@ -79,9 +82,6 @@
     </Reference>
     <Reference Include="Unity.CollabProxy.Editor">
       <HintPath>D:/School/Game Development 1B/POE/POE_CombatSimulation_Unity/POE_CombatSimulation/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.TextMeshPro">
-      <HintPath>D:/School/Game Development 1B/POE/POE_CombatSimulation_Unity/POE_CombatSimulation/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Analytics.DataPrivacy">
       <HintPath>D:/School/Game Development 1B/POE/POE_CombatSimulation_Unity/POE_CombatSimulation/Library/ScriptAssemblies/Unity.Analytics.DataPrivacy.dll</HintPath>
