@@ -60,8 +60,7 @@ public class FactoryBuilding : MonoBehaviour
       RB  = value;
     }
   }
-
-
+  
   public int Health
   { get { return Health;  }
     set

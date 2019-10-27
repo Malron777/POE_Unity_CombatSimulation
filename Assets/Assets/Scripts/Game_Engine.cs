@@ -14,7 +14,7 @@ public class Game_Engine : MonoBehaviour
 
   private void Start()
   {
-    numberOfUnits = map.gridSizeX * map.gridSizeY / 2;
+    numberOfUnits = (int)(map.gridSizeX * map.gridSizeY / 2);
     map.numberOfUnits = numberOfUnits;
     StartGame();
   }
