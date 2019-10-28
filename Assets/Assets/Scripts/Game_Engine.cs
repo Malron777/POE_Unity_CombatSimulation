@@ -14,7 +14,7 @@ public class Game_Engine : MonoBehaviour
 
   private void Start()
   {
-    numberOfUnits = (int)(map.gridSizeX * map.gridSizeY / 2);
+    numberOfUnits = (int)((map.gridSizeX * map.gridSizeY) / 4);
     map.numberOfUnits = numberOfUnits;
     StartGame();
   }
@@ -36,7 +36,6 @@ public class Game_Engine : MonoBehaviour
   public void StartGame()
   {
     map.GenerateBattlefield(numberOfUnits);
-    map.UpdateDisplay();
   }
 
   public void StartNewRound()
@@ -45,6 +44,10 @@ public class Game_Engine : MonoBehaviour
     for (int i = 0; i < map.units.Count; i++)
     {
       if (map.units[i].GetComponent<Unit>() != null)
+      {
+        PerformAction(map.units[i]);
+      }
+      if (map.units[i].GetComponent<WizardUnit>() != null)
       {
         PerformAction(map.units[i]);
       }
@@ -60,6 +63,8 @@ public class Game_Engine : MonoBehaviour
         CheckBuildingProduction(building);
       }
     }
+
+    map.UpdateDisplay();
 
     roundsCompleted++;
   }
@@ -83,7 +88,7 @@ public class Game_Engine : MonoBehaviour
       if (tClosestEnemy != null && lUnit.health >= 0.25 * lUnit.maxHealth)
       {
         Unit closestEnemy = tClosestEnemy.GetComponent<Unit>();
-        if (lUnit.RangeCheck(closestEnemy))
+        if (lUnit.RangeCheck(closestEnemy) && closestEnemy != null)
         {
           lUnit.EngageUnit(closestEnemy);
           lUnit.isAttacking = true;

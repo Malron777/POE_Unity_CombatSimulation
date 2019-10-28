@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5537324282828294439}
   - component: {fileID: 4323775326388001632}
+  - component: {fileID: -2056479374839278870}
   m_Layer: 0
   m_Name: Melee_Green
   m_TagString: Untagged
@@ -79,3 +80,26 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &-2056479374839278870
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4453117396638008854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7b04bc1b3d12a547aada17c85616ebc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  map: {fileID: 0}
+  xPosition: 0
+  yPosition: 0
+  health: 0
+  speed: 0
+  attack: 0
+  attackRange: 0
+  symbol: 0
+  isAttacking: 0
+  isDead: 0
+  Name: 

@@ -5,61 +5,66 @@ using UnityEngine;
 public class ResourceBuilding : MonoBehaviour
 {
   public Map map;
+
+  private int _xPosition = 0;
   public int xPosition
   {
-    get { return xPosition; }
+    get { return _xPosition; }
     set
     {
       if (value < 0)
       {
-        xPosition = 0;
+        _xPosition = 0;
       }
       else if (value >= map.gridSizeX)
       {
-        xPosition = map.gridSizeX - 1;
+        _xPosition = map.gridSizeX - 1;
       }
       else
       {
-        xPosition = value;
-      }
-    }
-  }
-  public int yPosition
-  {
-    get
-    {
-      return yPosition;
-    }
-    set
-    {
-      if (value < 0)
-      {
-        yPosition = 0;
-      }
-      else if (value >= map.gridSizeY)
-      {
-        yPosition = map.gridSizeY - 1;
-      }
-      else
-      {
-        yPosition = value;
+        _xPosition = value;
       }
     }
   }
 
-  public int Health
+  private int _yPosition = 0;
+  public int yPosition
   {
-    get { return Health; }
+    get
+    {
+      return _yPosition;
+    }
     set
     {
-      Health = value;
-      if (Health < 0)
+      if (value < 0)
+      {
+        _yPosition = 0;
+      }
+      else if (value >= map.gridSizeY)
+      {
+        _yPosition = map.gridSizeY - 1;
+      }
+      else
+      {
+        _yPosition = value;
+      }
+    }
+  }
+
+  private int health = 0;
+  public int Health
+  {
+    get { return health; }
+    set
+    {
+      health = value;
+      if (health < 0)
       {
         Death();
       }
-      if (Health > MaxHealth)
+      if (health > MaxHealth)
       {
-        Health = MaxHealth;
+        health = MaxHealth;
       }
     }
   }
@@ -95,6 +100,7 @@ public class ResourceBuilding : MonoBehaviour
 
   public void Death()
   {
-    Destroy(this);
+    map.PlaceUnit(map.blankTile, xPosition, yPosition);
+    Destroy(this.gameObject);
   }
 }

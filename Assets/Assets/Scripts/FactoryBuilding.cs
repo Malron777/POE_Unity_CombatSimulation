@@ -5,44 +5,48 @@ using UnityEngine;
 public class FactoryBuilding : MonoBehaviour
 {
   public Map map;
+
+  private int _xPosition = 0;
   public int xPosition
   {
-    get { return xPosition; }
+    get { return _xPosition; }
     set
     {
       if (value < 0)
       {
-        xPosition = 0;
+        _xPosition = 0;
       }
       else if (value >= map.gridSizeX)
       {
-        xPosition = map.gridSizeX - 1;
+        _xPosition = map.gridSizeX - 1;
       }
       else
       {
-        xPosition = value;
+        _xPosition = value;
       }
     }
   }
+
+  private int _yPosition = 0;
   public int yPosition
   {
     get
     {
-      return yPosition;
+      return _yPosition;
     }
     set
     {
       if (value < 0)
       {
-        yPosition = 0;
+        _yPosition = 0;
       }
       else if (value >= map.gridSizeY)
       {
-        yPosition = map.gridSizeY - 1;
+        _yPosition = map.gridSizeY - 1;
       }
       else
       {
-        yPosition = value;
+        _yPosition = value;
       }
     }
   }
@@ -60,19 +64,20 @@ public class FactoryBuilding : MonoBehaviour
       RB  = value;
     }
   }
-  
+
+  private int health = 0;
   public int Health
-  { get { return Health;  }
+  { get { return health;  }
     set
     {
-      Health = value;
-      if (Health < 0)
+      health = value;
+      if (health < 0)
       {
         Death();
       }
-      if (Health > MaxHealth)
+      if (health > MaxHealth)
       {
-        Health = MaxHealth;
+        health = MaxHealth;
       }
     }
   }
@@ -101,7 +106,6 @@ public class FactoryBuilding : MonoBehaviour
     }
   }
 
-
   public void BuildNewUnit(int aUnitNumber)
   {
     if (resourceBuilding != null)
@@ -122,7 +126,8 @@ public class FactoryBuilding : MonoBehaviour
 
   public void Death()
   {
-    Destroy(this);
+    map.PlaceUnit(map.blankTile, xPosition, yPosition);
+    Destroy(this.gameObject);
   }
 
 }

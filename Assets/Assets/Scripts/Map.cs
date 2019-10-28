@@ -8,7 +8,8 @@ public class Map : MonoBehaviour
   public List<GameObject> greenUnits;
   public List<GameObject> grayUnits;
   public GameObject blankTile;
-  public GameObject factoryBuilding;
+  public GameObject factoryBuildingRed;
+  public GameObject factoryBuildingGreen;
   public GameObject resourceBuilding;
 
   public enum Direction { Up, Down, Left, Right };
@@ -16,38 +17,31 @@ public class Map : MonoBehaviour
   public int gridSizeY = 20;
   public GameObject[,] Battlefield;
 
-  public int numberOfUnits;
+  public int numberOfUnits = 20;
   public List<GameObject> units;
   public List<GameObject> buildings;
 
   public enum UnitTypes { Red, Green}
 
-  // Start is called before the first frame update
-  void Start()
-  {
-    //Battlefield = new GameObject[gridSizeX, gridSizeY];
-    //numberOfUnits = gridSizeX * gridSizeY / 2;
-  }
 
-  // Update is called once per frame
-  void Update()
-  {    
-
-  }
   
-  private void DrawBlankMap()
+  public void DrawBlankMap()
   {
+    Battlefield = new GameObject[gridSizeX, gridSizeY];
     for (int i = 0; i < gridSizeX; i++)
     {
       for (int j = 0; j < gridSizeY; j++)
       {
-        PlaceUnit(blankTile, i, j);
+        Battlefield[i, j] = blankTile;
+        Instantiate(blankTile, GetDisplayCoord(i, j), Quaternion.identity);
       }
     }
   }
 
   public void UpdateDisplay()
   {
+    DrawBlankMap();
+
     foreach (GameObject unit in units)
     {
       if (unit.GetComponent<Unit>() != null)
@@ -79,20 +73,109 @@ public class Map : MonoBehaviour
 
   public void PlaceUnit(GameObject aUnit, int aXPos, int aYPos)
   {
-    GameObject tUnit = Battlefield[aXPos, aYPos];
-    Battlefield[aXPos, aYPos] = aUnit;
-    DestroyImmediate(tUnit);
-    Instantiate(aUnit, GetDisplayCoord(aXPos, aYPos), Quaternion.identity);
+    if (Battlefield[aXPos, aYPos] == null || Battlefield[aXPos, aYPos] == blankTile)
+    {
+      Battlefield[aXPos, aYPos] = aUnit;
+      Instantiate(aUnit, GetDisplayCoord(aXPos, aYPos), Quaternion.identity);
+    }
+    else
+    {
+      Destroy(Battlefield[aXPos, aYPos]);
+      Battlefield[aXPos, aYPos] = aUnit;
+      Instantiate(aUnit, GetDisplayCoord(aXPos, aYPos), Quaternion.identity);
+    }
   }
 
-  public void UpdateUnitPosition(int aXCurrentPos, int aYCurrentPos, int aXNewPos, int aYNewPos)
+  private bool CheckPositionAgainstGridSize(int x, int y)
   {
-    GameObject unit = Battlefield[aXCurrentPos, aYCurrentPos];
-    Destroy(Battlefield[aXCurrentPos, aYCurrentPos]);
-    Battlefield[aXCurrentPos, aYCurrentPos] = blankTile;
-    Destroy(Battlefield[aXNewPos, aXNewPos]);
-    Battlefield[aXNewPos, aXNewPos] = unit;
-    Instantiate(Battlefield[aXNewPos, aXNewPos], GetDisplayCoord(aXNewPos, aYNewPos), Quaternion.identity);
+    if (x >= gridSizeX)
+    {
+      x = gridSizeX - 1;
+      return false;
+    }
+  
+    if (y >= gridSizeY)
+    {
+      y = gridSizeY - 1;
+      return false;
+    }
+
+    if (x < 0)
+    {
+      x = 0;
+      return false;
+    }
+
+    if (y < 0)
+    {
+      y = 0;
+      return false;
+    }
+    return true;
+  }
+
+  public void UpdateUnitPosition(GameObject aUnitToMove, int aXNewPos, int aYNewPos)
+  {
+    int newX = aXNewPos;
+    int newY = aYNewPos;
+    if (!CheckPositionAgainstGridSize(newY, newY))
+    {
+      if (newX >= gridSizeX)
+      {
+        newX = gridSizeX - 1;
+      }
+      if (newY >= gridSizeY)
+      {
+        newY = gridSizeY - 1;
+      }
+      if (newX < 0)
+      {
+        newX = 0;
+      }
+      if (newY < 0)
+      {
+        newY = 0;
+      }
+    }
+
+    if (aUnitToMove.GetComponent<Unit>() != null)
+    {
+      if (Battlefield[newX, newY] == blankTile)
+      {
+        Unit lUnitToMove = aUnitToMove.GetComponent<Unit>();
+
+        CheckPositionAgainstGridSize(lUnitToMove.xPosition, lUnitToMove.yPosition);
+
+        int currentPosX = lUnitToMove.xPosition;
+        int currentPosY = lUnitToMove.yPosition;
+
+        GameObject unit = Battlefield[currentPosX, currentPosY];
+
+        Battlefield[currentPosX, currentPosY] = Battlefield[newX, newY];
+        Battlefield[newX, newY] = unit;
+
+        Battlefield[currentPosX, currentPosY].transform.position = GetDisplayCoord(currentPosX, currentPosY);
+        Battlefield[newX, newY].transform.position = GetDisplayCoord(newX, newY);
+      }
+    }
+    else if (aUnitToMove.GetComponent<WizardUnit>() != null)
+    {
+      WizardUnit lUnitToMove = aUnitToMove.GetComponent<WizardUnit>();
+
+      CheckPositionAgainstGridSize(lUnitToMove.xPosition, lUnitToMove.yPosition);
+
+      int currentPosX = lUnitToMove.xPosition;
+      int currentPosY = lUnitToMove.yPosition;
+
+      GameObject unit = Battlefield[currentPosX, currentPosY];
+
+      Battlefield[currentPosX, currentPosY] = Battlefield[aXNewPos, aYNewPos];
+      Battlefield[aXNewPos, aYNewPos] = unit;
+
+      Battlefield[currentPosX, currentPosY].transform.position = GetDisplayCoord(currentPosX, currentPosY);
+      Battlefield[aXNewPos, aYNewPos].transform.position = GetDisplayCoord(aXNewPos, aYNewPos);
+    }
+
   }
 
   private Vector2 GetDisplayCoord(int aXpos, int aYPos)
@@ -105,22 +188,40 @@ public class Map : MonoBehaviour
 
   public void GenerateBattlefield(int aNumberOfUnits)
   {
-    for (int i = 0; i < gridSizeX; i++)
-    {
-      for (int j = 0; j < gridSizeY; j++)
-      {
-        Battlefield = new GameObject[gridSizeX, gridSizeY];
-        //Destroy(Battlefield[i, j]);
-        Battlefield[i, j] = blankTile;
-      }
-    }
-
-    for (int i = 0; i < aNumberOfUnits; i++)
+    Battlefield = new GameObject[gridSizeX, gridSizeY];
+    for (int i = 0; i < aNumberOfUnits / 2; i++)
     {
       Vector2 position = GetRandomOpenPosition();
       GameObject unit = GenerateRandomUnit(i);
       PlaceUnit(unit, (int)position.x, (int)position.y);
       units.Add(unit);
+    }
+
+    for (int i = 0; i < aNumberOfUnits / 8; i++)
+    {
+      Vector2 position = GetRandomOpenPosition();
+      GameObject building = GenerateFactory(i);
+      PlaceUnit(building, (int)position.x, (int)position.y);
+      buildings.Add(building);
+    }
+
+    for (int i = 0; i < aNumberOfUnits / 4; i++)
+    {
+      Vector2 position = GetRandomOpenPosition();
+      GameObject wizard = GenerateWizard(i, (int)position.x, (int)position.y);
+      PlaceUnit(wizard, (int)position.x, (int)position.y);
+      units.Add(wizard);
+    }
+
+    for (int i = 0; i < gridSizeX; i++)
+    {
+      for (int j = 0; j < gridSizeY; j++)
+      {
+        if (Battlefield[i, j] == null)
+        {
+          PlaceUnit(blankTile, i, j);
+        }
+      }
     }
   }
 
@@ -133,11 +234,11 @@ public class Map : MonoBehaviour
     {
       int x = Random.Range(0, gridSizeX);
       int y = Random.Range(0, gridSizeY);
-      position.x = x;
-      position.y = y;
-      if (Battlefield[x, y] == blankTile)
+      if ( Battlefield[x, y] == null || Battlefield[x, y] == blankTile)
       {
         posFound = true;
+        position.x = x;
+        position.y = y;
       }
     }
     while (!posFound);
@@ -147,28 +248,32 @@ public class Map : MonoBehaviour
 
   public GameObject GenerateFactory(int aUnitNumber)
   {
-    GameObject lFactory = Instantiate(factoryBuilding);
+    GameObject lFactory = new GameObject();
+    FactoryBuilding building;
     Vector2 point = GetRandomOpenPosition();
 
     int xPos = (int)point.x;
     int yPos = (int)point.y;
 
-    FactoryBuilding building = lFactory.GetComponent<FactoryBuilding>();
-
     int team = Random.Range(0, 2);
     if (team == 0)
     {
+      lFactory = Instantiate(factoryBuildingRed, GetDisplayCoord((int)point.x, (int)point.y), Quaternion.identity);
+      building = lFactory.GetComponent<FactoryBuilding>();
       building.UnitType = UnitTypes.Red;
       building.Faction = "Red";
       building.Symbol = 'R';
     }
     else
     {
+      lFactory = Instantiate(factoryBuildingGreen, GetDisplayCoord((int)point.x, (int)point.y), Quaternion.identity);
+      building = lFactory.GetComponent<FactoryBuilding>();
       building.UnitType = UnitTypes.Green;
       building.Faction = "Green";
       building.Symbol = 'G';
     }
 
+    building.map = this;
     building.name = $"aUnitNumber";
     building.xPosition = xPos;
     building.yPosition = yPos;
@@ -177,18 +282,27 @@ public class Map : MonoBehaviour
     building.ResourceBuilding = GenerateResourceBuilding(aUnitNumber++);
 
     buildings.Add(lFactory);
+
+    if (lFactory == null)
+    {
+      return factoryBuildingRed;
+    }
+    else
+    {
     return lFactory;
+    }
   }
   public GameObject GenerateResourceBuilding(int aUnitNumber)
   {
-    GameObject lBuilding = Instantiate(resourceBuilding);
     Vector2 point = GetRandomOpenPosition();
+    GameObject lBuilding = Instantiate(resourceBuilding, GetDisplayCoord((int)point.x, (int)point.y), Quaternion.identity);
 
     int xPos = (int)point.x;
     int yPos = (int)point.y;
 
     ResourceBuilding building = lBuilding.GetComponent<ResourceBuilding>();
 
+    building.map = this;
     building.name = $"aUnitNumber";
     building.xPosition = xPos;
     building.yPosition = yPos;
@@ -208,7 +322,7 @@ public class Map : MonoBehaviour
     int xPos = (int)point.x;
     int yPos = (int)point.y;
 
-    int team = Random.Range(0, 3);
+    int team = Random.Range(0, 2);
     if (team == 0)
     {
       lUnit = GenerateRandomRedUnit(aUnitNumber, xPos, yPos);
@@ -217,10 +331,26 @@ public class Map : MonoBehaviour
     {
       lUnit = GenerateRandomGreenUnit(aUnitNumber, xPos, yPos);
     }
-    else if (team == 2)
-    {
 
-    }
+    return lUnit;
+  }
+
+  public GameObject GenerateWizard(int aUnitNumber, int aXPos, int aYPos)
+  {
+    int unitType = Random.Range(0, redUnits.Capacity);
+    GameObject lUnit = Instantiate(grayUnits[unitType]);
+    WizardUnit unit = lUnit.GetComponent<WizardUnit>();
+
+    unit.Name = $"{aUnitNumber}";
+    unit.attackRange = 1;
+    unit.map = this;
+    unit.xPosition = aXPos;
+    unit.yPosition = aYPos;
+    unit.health = 12;
+    unit.speed = Random.Range(1, 4);
+    unit.attack = Random.Range(1, 6);
+    unit.faction = "Red";
+    unit.symbol = 'R';
 
     return lUnit;
   }
@@ -240,6 +370,7 @@ public class Map : MonoBehaviour
       unit.attackRange = 1;
     }
     //unit.name = $"{aUnitNumber}";
+    unit.map = this;
     unit.xPosition = aXPos;
     unit.yPosition = aYPos;
     unit.health = 12;
@@ -248,7 +379,6 @@ public class Map : MonoBehaviour
     unit.faction = "Red";
     unit.symbol = 'R';
 
-    units.Add(lUnit);
     return lUnit;
   }
   public GameObject GenerateRandomGreenUnit(int aUnitNumber, int aXPos, int aYPos)
@@ -266,6 +396,7 @@ public class Map : MonoBehaviour
       unit.attackRange = 1;
     }
     //unit.name = $"{aUnitNumber}";
+    unit.map = this;
     unit.xPosition = aXPos;
     unit.yPosition = aYPos;
     unit.health = 12;
@@ -273,7 +404,7 @@ public class Map : MonoBehaviour
     unit.attack = Random.Range(1, 6);
     unit.faction = "Green";
     unit.symbol = 'G';
-    units.Add(lUnit);
+
     return lUnit;
   }
   public GameObject GenerateRandomGrayUnit(int aUnitNumber, int aXPos, int aYPos)
@@ -282,8 +413,9 @@ public class Map : MonoBehaviour
     GameObject lUnit = Instantiate(grayUnits[unitType]);
     Unit unit = lUnit.GetComponent<Unit>();
 
+    unit.map = this;
     unit.attackRange = 1;
-    unit.name = $"{aUnitNumber}";
+    unit.Name = $"{aUnitNumber}";
     unit.xPosition = aXPos;
     unit.yPosition = aYPos;
     unit.health = 12;
@@ -291,7 +423,7 @@ public class Map : MonoBehaviour
     unit.attack = Random.Range(1, 6);
     unit.faction = "Gray";
     unit.symbol = 'W';
-    units.Add(lUnit);
+
     return lUnit;
   }
 }

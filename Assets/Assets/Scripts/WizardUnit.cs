@@ -24,26 +24,26 @@ public class WizardUnit : MonoBehaviour
   public bool isAttacking;
 
   public bool isDead = false;
-  public string name;
+  public string Name;
 
   public void Move(Map.Direction direction)
   {
     switch (direction)
     {
       case Map.Direction.Up:
-        map.UpdateUnitPosition(this.xPosition, this.yPosition, this.yPosition + 1, this.xPosition);
+        map.UpdateUnitPosition(this.gameObject, this.yPosition + 1, this.xPosition);
         this.yPosition += 1;
         break;
       case Map.Direction.Down:
-        map.UpdateUnitPosition(this.xPosition, this.yPosition, this.yPosition - 1, this.xPosition);
+        map.UpdateUnitPosition(this.gameObject, this.yPosition - 1, this.xPosition);
         this.yPosition -= 1;
         break;
       case Map.Direction.Left:
-        map.UpdateUnitPosition(this.xPosition, this.yPosition, this.yPosition, this.xPosition + 1);
+        map.UpdateUnitPosition(this.gameObject, this.yPosition, this.xPosition + 1);
         this.xPosition -= 1;
         break;
       case Map.Direction.Right:
-        map.UpdateUnitPosition(this.xPosition, this.yPosition, this.yPosition, this.xPosition + 1);
+        map.UpdateUnitPosition(this.gameObject, this.yPosition, this.xPosition + 1);
         this.xPosition -= 1;
         break;
       default:
@@ -146,6 +146,7 @@ public class WizardUnit : MonoBehaviour
 
   public void KillUnit()
   {
-    Destroy(this);
+    map.PlaceUnit(map.blankTile, xPosition, yPosition);
+    Destroy(this.gameObject);
   }
 }

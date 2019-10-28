@@ -23,39 +23,27 @@ public class Unit : MonoBehaviour
   public bool isAttacking;
 
   public bool isDead = false;
-  public string name;
-
-  // Start is called before the first frame update
-  void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+  public string Name;
 
   public void Move(Map.Direction direction)
   {
     switch (direction)
     {
       case Map.Direction.Up:
-        map.UpdateUnitPosition(this.xPosition, this.yPosition, this.yPosition + 1, this.xPosition);
         this.yPosition += 1;
+        map.UpdateUnitPosition(this.gameObject, this.yPosition, this.xPosition);
         break;
       case Map.Direction.Down:
-        map.UpdateUnitPosition(this.xPosition, this.yPosition, this.yPosition - 1, this.xPosition);
         this.yPosition -= 1;
+        map.UpdateUnitPosition(this.gameObject, this.yPosition, this.xPosition);
         break;
       case Map.Direction.Left:
-        map.UpdateUnitPosition(this.xPosition, this.yPosition, this.yPosition, this.xPosition + 1);
         this.xPosition -= 1;
+        map.UpdateUnitPosition(this.gameObject, this.yPosition, this.xPosition);
         break;
       case Map.Direction.Right:
-        map.UpdateUnitPosition(this.xPosition, this.yPosition, this.yPosition, this.xPosition + 1);
         this.xPosition -= 1;
+        map.UpdateUnitPosition(this.gameObject, this.yPosition, this.xPosition);
         break;
       default:
         break;
@@ -108,14 +96,14 @@ public class Unit : MonoBehaviour
       //Check rows
       for (int i = minRange; i < maxRange; i++)
       {
-        if (aFieldToCheck[i, minRange] != null)
+        if (aFieldToCheck[i, minRange] != map.blankTile)
         {
           return aFieldToCheck[i, minRange];
         }
       }
       for (int i = minRange; i < maxRange; i++)
       {
-        if (aFieldToCheck[i, maxRange - 1] != null)
+        if (aFieldToCheck[i, maxRange - 1] != map.blankTile)
         {
           return aFieldToCheck[i, maxRange - 1];
         }
@@ -136,14 +124,14 @@ public class Unit : MonoBehaviour
       //Check columns
       for (int i = minRange; i < maxRange; i++)
       {
-        if (aFieldToCheck[i, maxRange - 1] != null)
+        if (aFieldToCheck[i, maxRange - 1] != map.blankTile)
         {
           return aFieldToCheck[i, maxRange - 1];
         }
       }
       for (int i = minRange; i < maxRange; i++)
       {
-        if (aFieldToCheck[i, minRange] != null)
+        if (aFieldToCheck[i, minRange] != map.blankTile)
         {
           return aFieldToCheck[i, minRange];
         }
@@ -161,7 +149,8 @@ public class Unit : MonoBehaviour
 
   public void KillUnit()
   {
-    Destroy(this);
+    map.PlaceUnit(map.blankTile, xPosition, yPosition);
+    Destroy(this.gameObject);
   }
 
   //public string ToString()
